@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-sage: #9caf88;
+    --color-sage-dark: #7a9070;
+    --color-rose: #d4a5a5;
+    --color-rose-dark: #b88989;
+    --color-charcoal: #3a3a3a;
+    --color-gold: #d4af37;
+    --color-cream: #faf8f3;
+  }
+
+  * {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[#faf8f3] text-[#3a3a3a];
+  }
+}
+
+@layer utilities {
+  .font-playfair {
+    font-family: var(--font-playfair);
+  }
+
+  .font-cormorant {
+    font-family: var(--font-cormorant);
+  }
+
+  .font-script {
+    font-family: var(--font-great-vibes);
+  }
+}
