@@ -10,7 +10,7 @@ export default function BlessQuote() {
 	const isInView = useInView(ref, { once: true, margin: "-100px" });
 
 	return (
-		<section className="relative w-full overflow-hidden bg-linear-to-br from-[#f8f5f0] via-[#fef9f3] to-[#f5ebe0] px-2 py-3">
+		<section className="relative w-full bg-transparent px-2 py-6">
 			<div ref={ref} className="relative z-10 mx-auto max-w-5xl">
 				<motion.div
 					initial={{ opacity: 0, y: 50 }}
@@ -23,7 +23,7 @@ export default function BlessQuote() {
 						initial={{ opacity: 0, y: 30 }}
 						animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
 						transition={{ duration: 0.8, delay: 0.4 }}
-						className="relative mx-auto max-w-3xl rounded-2xl border border-[#9caf88]/20 bg-white/60 p-6 md:p-10 shadow-2xl backdrop-blur-sm"
+						className="relative mx-auto max-w-3xl rounded-2xl border border-[#9caf88]/20 bg-white/60 p-6 md:p-10 shadow-xl backdrop-blur-sm"
 					>
 						{/* Corner decorations */}
 						<div className="absolute left-3 top-3 md:left-4 md:top-4 h-5 w-5 md:h-8 md:w-8 border-l-2 border-t-2 border-[#9caf88]/30" />
