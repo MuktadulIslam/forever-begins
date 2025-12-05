@@ -14,10 +14,10 @@ interface Photo {
 
 // Sample photo data - replace with actual photo paths
 const photos: Photo[] = [
-	{ id: 1, src: '/x.jpg', alt: 'Couple photo 1' },
-	{ id: 2, src: '/y.jpeg', alt: 'Couple photo 2' },
-	// { id: 1, src: '/images/wedding-couple1.png', alt: 'Couple photo 1'},
-	// { id: 2, src: '/images/wedding-couple2.png', alt: 'Couple photo 2' },
+	// { id: 1, src: '/x.jpg', alt: 'Couple photo 1'},
+	// { id: 2, src: '/y.jpeg', alt: 'Couple photo 2' },
+	{ id: 1, src: '/images/wedding-couple1.png', alt: 'Couple photo 1'},
+	{ id: 2, src: '/images/wedding-couple2.png', alt: 'Couple photo 2' },
 	{ id: 3, src: '/images/wedding-couple3.png', alt: 'Family photo 1' },
 	{ id: 4, src: '/images/wedding-couple4.png', alt: 'Family photo 2' },
 	{ id: 5, src: '/images/wedding-couple5.png', alt: 'Couple photo 3' },
@@ -69,13 +69,14 @@ function PhotoCard({ photo, onClick, index }: { photo: Photo; onClick: () => voi
 	);
 }
 
-function Lightbox({ photo, onClose, onNext, onPrev, currentIndex, totalPhotos }: {
+function Lightbox({ photo, onClose, onNext, onPrev, currentIndex, totalPhotos, direction }: {
 	photo: Photo;
 	onClose: () => void;
 	onNext: () => void;
 	onPrev: () => void;
 	currentIndex: number;
 	totalPhotos: number;
+	direction: 'next' | 'prev';
 }) {
 	return (
 		<motion.div
@@ -132,32 +133,84 @@ function Lightbox({ photo, onClose, onNext, onPrev, currentIndex, totalPhotos }:
 				</motion.button>
 			)}
 
-			{/* Image container */}
+			{/* Image container with drag/swipe support */}
 			<motion.div
-				initial={{ scale: 0.9, opacity: 0 }}
-				animate={{ scale: 1, opacity: 1 }}
-				exit={{ scale: 0.9, opacity: 0 }}
-				transition={{ duration: 0.3 }}
-				className="relative max-w-6xl max-h-[85vh] w-full"
+				key={currentIndex}
+				custom={direction}
+				initial="enter"
+				animate="center"
+				exit="exit"
+				variants={{
+					enter: (direction: 'next' | 'prev') => ({
+						x: direction === 'next' ? 1000 : -1000,
+						opacity: 0,
+						scale: 0.9
+					}),
+					center: {
+						x: 0,
+						opacity: 1,
+						scale: 1
+					},
+					exit: (direction: 'next' | 'prev') => ({
+						x: direction === 'next' ? -1000 : 1000,
+						opacity: 0,
+						scale: 0.9
+					})
+				}}
+				transition={{
+					x: { type: "spring", stiffness: 300, damping: 30 },
+					opacity: { duration: 0.2 },
+					scale: { duration: 0.2 }
+				}}
+				drag="x"
+				dragConstraints={{ left: 0, right: 0 }}
+				dragElastic={0.7}
+				onDragEnd={(_, { offset, velocity }) => {
+					const swipe = Math.abs(offset.x) * velocity.x;
+
+					if (swipe > 10000 || offset.x > 100) {
+						// Swiped right - go to previous
+						onPrev();
+					} else if (swipe < -10000 || offset.x < -100) {
+						// Swiped left - go to next
+						onNext();
+					}
+				}}
+				className="relative max-w-6xl max-h-[85vh] w-full cursor-grab active:cursor-grabbing"
 				onClick={(e) => e.stopPropagation()}
 			>
-				<div className="relative w-full h-full flex items-center justify-center">
+				<div className="relative w-full h-full flex items-center justify-center select-none">
 					<Image
 						src={photo.src}
 						alt={photo.alt}
 						width={1200}
 						height={900}
-						className="max-w-full max-h-[85vh] w-full h-full object-contain rounded-lg shadow-2xl"
+						className="max-w-full max-h-[85vh] w-full h-full object-contain rounded-lg shadow-2xl pointer-events-none"
 						priority
+						draggable={false}
 					/>
 				</div>
 
 				{/* Photo counter */}
-				<div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-black/30 backdrop-blur-sm">
+				<div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-black/30 backdrop-blur-sm pointer-events-none">
 					<p className="font-cormorant text-white text-sm">
 						{currentIndex + 1} / {totalPhotos}
 					</p>
 				</div>
+
+				{/* Swipe indicator hint (shows on first photo) */}
+				{currentIndex === 0 && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: [0, 0.6, 0] }}
+						transition={{ duration: 2, delay: 0.5 }}
+						className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur-sm pointer-events-none"
+					>
+						<ChevronLeft className="h-4 w-4 text-white animate-pulse" />
+						<span className="text-white text-sm font-cormorant">Swipe to navigate</span>
+						<ChevronRight className="h-4 w-4 text-white animate-pulse" />
+					</motion.div>
+				)}
 			</motion.div>
 		</motion.div>
 	);
@@ -167,8 +220,10 @@ export default function PhotoGallery() {
 	const ref = useRef(null);
 	const isInView = useInView(ref, { once: true, margin: "-50px" });
 	const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
+	const [direction, setDirection] = useState<'next' | 'prev'>('next');
 
 	const handleNext = useCallback(() => {
+		setDirection('next');
 		setSelectedPhoto((current) => {
 			if (current !== null && current < photos.length - 1) {
 				return current + 1;
@@ -178,6 +233,7 @@ export default function PhotoGallery() {
 	}, []);
 
 	const handlePrev = useCallback(() => {
+		setDirection('prev');
 		setSelectedPhoto((current) => {
 			if (current !== null && current > 0) {
 				return current - 1;
@@ -266,7 +322,7 @@ export default function PhotoGallery() {
 			</div>
 
 			{/* Lightbox Modal */}
-			<AnimatePresence>
+			<AnimatePresence initial={false} custom={direction}>
 				{selectedPhoto !== null && (
 					<Lightbox
 						photo={photos[selectedPhoto]}
@@ -275,6 +331,7 @@ export default function PhotoGallery() {
 						onPrev={handlePrev}
 						currentIndex={selectedPhoto}
 						totalPhotos={photos.length}
+						direction={direction}
 					/>
 				)}
 			</AnimatePresence>
