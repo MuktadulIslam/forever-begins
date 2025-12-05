@@ -29,7 +29,7 @@ export default function EventDetails() {
     };
 
     return (
-        <section className="relative w-full overflow-hidden bg-linear-to-b from-[#faf8f3] via-[#f5f2ea] to-[#faf8f3] px-4 py-6 smLpy-10 md:py-16">
+        <section className="relative w-full px-4 py-6 smLpy-10 md:py-16">
 
             <div ref={ref} className="relative mx-auto max-w-7xl">
                 {/* Elegant Header */}
@@ -42,9 +42,10 @@ export default function EventDetails() {
                     <h2 className="font-playfair md:mb-2 text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold text-[#3a3a3a]">
                         Celebration Details {/* When & Where */}
                     </h2>
-                    <p className="font-cormorant font-semibold mx-auto max-w-2xl text-base  sm:text-lg lg:text-3xl text-[#3a3a3a]/80">
-                        We can't wait to celebrate this special day with you
-                    </p>
+                    <div className="mx-auto h-0.5 lg:h-1 w-40 sm:w-48 lg:w-60 bg-linear-to-r from-transparent via-[#d4a5a5] to-transparent sm:mb-1 lg:mb-2 rounded-full" />
+                    <p className="font-cormorant text-lg sm:text-xl lg:text-2xl text-[#3a3a3a]/70 max-w-2xl mx-auto leading-5">
+						We can't wait to celebrate this special day with you
+					</p>
                 </motion.div>
 
                 {/* Enhanced Main Card */}
@@ -52,11 +53,11 @@ export default function EventDetails() {
                     variants={containerVariants}
                     initial="hidden"
                     animate={isInView ? "visible" : "hidden"}
-                    className="relative overflow-hidden rounded-2xl bg-white shadow-2xl shadow-black/10"
+                    className="relative rounded-2xl bg-white shadow-xl shadow-black/10"
                 >
                     {/* Decorative corner accents */}
-                    <div className="pointer-events-none absolute left-0 top-0 h-32 w-32 bg-linear-to-br from-[#9caf88]/10 to-transparent" />
-                    <div className="pointer-events-none absolute bottom-0 right-0 h-32 w-32 bg-linear-to-tl from-[#d4a5a5]/10 to-transparent" />
+                    <div className="pointer-events-none absolute left-0 top-0 h-32 w-32 bg-linear-to-br rounded-tl-2xl from-[#9caf88]/10 to-transparent" />
+                    <div className="pointer-events-none absolute bottom-0 right-0 h-32 w-32 bg-linear-to-tl rounded-br-2xl from-[#d4a5a5]/10 to-transparent" />
 
                     <div className="grid gap-0 lg:grid-cols-5">
                         {/* Left Side - Event Info (3 columns) */}
