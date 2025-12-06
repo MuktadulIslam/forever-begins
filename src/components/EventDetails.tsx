@@ -42,10 +42,10 @@ export default function EventDetails() {
                     <h2 className="font-playfair md:mb-2 text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold text-[#3a3a3a]">
                         Celebration Details {/* When & Where */}
                     </h2>
-                    <div className="mx-auto h-0.5 lg:h-1 w-40 sm:w-48 lg:w-60 bg-linear-to-r from-transparent via-[#d4a5a5] to-transparent sm:mb-1 lg:mb-2 rounded-full" />
-                    <p className="font-cormorant text-lg sm:text-xl lg:text-2xl text-[#3a3a3a]/70 max-w-2xl mx-auto leading-5">
-						We can't wait to celebrate this special day with you
-					</p>
+                    <div className="mx-auto h-0.5 lg:h-1 w-40 sm:w-48 lg:w-60 bg-linear-to-r from-transparent via-[#d4a5a5] to-transparent rounded-full" />
+                    <p className="font-script mb-4 sm:mb-6 md:mb-8 lg:mb-10 text-xl sm:text-2xl lg:text-3xl text-[#3a3a3a]/70">
+                        We can't wait to celebrate this special day with you
+                    </p>
                 </motion.div>
 
                 {/* Enhanced Main Card */}

@@ -4,7 +4,6 @@ import EventDetails from '@/components/EventDetails';
 import LoveStoryTimeline from '@/components/LoveStoryTimeline';
 import PhotoGallery from '@/components/PhotoGallery';
 import DigitalMemoryCard from '@/components/DigitalMemoryCard';
-import DuaBox from '@/components/DuaBox';
 import Footer from '@/components/Footer';
 
 export default function HomePage() {
@@ -16,7 +15,6 @@ export default function HomePage() {
       <LoveStoryTimeline />
       <PhotoGallery />
       <DigitalMemoryCard />
-      <DuaBox />
       <Footer />
     </main>
   );

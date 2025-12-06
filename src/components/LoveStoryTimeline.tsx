@@ -236,15 +236,15 @@ export default function LoveStoryTimeline() {
 					initial={{ opacity: 0, y: 30 }}
 					animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
 					transition={{ duration: 0.8 }}
-					className="mb-6 md:mb-8 lg:mb-16 text-center px-4"
+					className="mb-6 md:mb-8 lg:mb-16 text-center"
 				>
 					<h2 className="font-playfair mb-1 lg:mb-2 text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold text-[#3a3a3a]">
-                        Our Love Story
-                    </h2>
+						Our Love Story
+					</h2>
 
-					<div className="mx-auto h-0.5 lg:h-1 w-40 sm:w-48 lg:w-60 bg-linear-to-r from-transparent via-[#d4a5a5] to-transparent sm:mb-1 lg:mb-2 rounded-full" />
+					<div className="mx-auto h-0.5 lg:h-1 w-40 sm:w-48 lg:w-60 bg-linear-to-r from-transparent via-[#d4a5a5] to-transparent rounded-full" />
 
-					<p className="font-cormorant text-lg sm:text-xl lg:text-2xl text-[#3a3a3a]/70 max-w-2xl mx-auto leading-5">
+					<p className="font-script mb-8 md:mb-10 text-xl sm:text-2xl lg:text-3xl text-[#3a3a3a]/70">
 						Every love story is beautiful, but ours is our favorite
 					</p>
 				</motion.div>
