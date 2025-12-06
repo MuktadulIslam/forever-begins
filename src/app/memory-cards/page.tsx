@@ -224,7 +224,7 @@ function MemoryCardDisplay({
               <div className="mb-3">
                 <p className="font-playfair text-lg font-semibold text-[#3a3a3a]">{card.name}</p>
                 <p className="font-cormorant text-sm text-[#3a3a3a]/60">
-                  {card.timestamp.toLocaleDateString()}
+                  {card.timestamp.toLocaleDateString('en-GB')}
                 </p>
               </div>
               <p className="font-cormorant text-base leading-relaxed text-[#3a3a3a]/80">
@@ -245,7 +245,7 @@ function MemoryCardDisplay({
               <div className="flex-1">
                 <p className="font-playfair text-lg font-semibold text-[#3a3a3a]">{card.name}</p>
                 <p className="font-cormorant text-sm text-[#3a3a3a]/60">
-                  {card.timestamp.toLocaleDateString()}
+                  {card.timestamp.toLocaleDateString('en-GB')}
                 </p>
               </div>
             </div>

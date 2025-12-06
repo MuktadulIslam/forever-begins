@@ -29,7 +29,7 @@ export default function HeroSection() {
 
           {/* Date */}
           <p className="font-cormorant text-3xl font-light tracking-[0.3em] sm:text-4xl md:text-5xl">
-            12.14.25
+            14.12.25
           </p>
 
           {/* Romantic Poem */}

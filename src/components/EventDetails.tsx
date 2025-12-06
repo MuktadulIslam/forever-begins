@@ -73,7 +73,7 @@ export default function EventDetails() {
                                     <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-[#d4af37]" />
                                 </div>
                                 <h3 className="font-playfair text-xl sm:text-3xl lg:text-4xl font-bold leading-6 sm:leading-8 lg:leading-10 text-[#3a3a3a]">
-                                    Md Didarul Alim Hridoy
+                                    Syed Didarul Alim Hridoy
                                     <br />
                                     <span className="font-script mr-2 sm:text-mr-3 lg:mr-4 text-[#d4a5a5]">&</span>
                                     Mst Roksana Khatun
