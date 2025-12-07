@@ -288,37 +288,6 @@ export default function PhotoGallery() {
 						/>
 					))}
 				</div>
-
-				{/* See More Button */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-					transition={{ duration: 0.6, delay: 0.4 }}
-					className="mt-8 md:mt-12 text-center"
-				>
-					<a
-						href="https://your-photo-gallery-link.com"
-						target="_blank"
-						className="group relative inline-flex items-center gap-2 px-8 py-1 md:px-10 md:py-1.5 rounded-full bg-linear-to-r from-[#9caf88] via-[#b5a491] to-[#d4a5a5] text-white font-cormorant font-semibold text-lg md:text-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
-					>
-						{/* Shine effect on hover */}
-						<div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-
-						<span className="relative z-10">See More Photos</span>
-
-						{/* External link icon */}
-						<motion.svg
-							className="relative z-10 w-5 h-5"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-							animate={{ x: [0, 3, 0], y: [0, -3, 0] }}
-							transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-						>
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-						</motion.svg>
-					</a>
-				</motion.div>
 			</div>
 
 			{/* Lightbox Modal */}

@@ -5,6 +5,7 @@ import LoveStoryTimeline from '@/components/LoveStoryTimeline';
 import PhotoGallery from '@/components/PhotoGallery';
 import DigitalMemoryCard from '@/components/DigitalMemoryCard';
 import Footer from '@/components/Footer';
+import PhotoAlbums from '@/components/PhotoAlbums';
 
 export default function HomePage() {
   return (
@@ -15,6 +16,7 @@ export default function HomePage() {
       <LoveStoryTimeline />
       <PhotoGallery />
       <DigitalMemoryCard />
+      <PhotoAlbums />
       <Footer />
     </main>
   );
