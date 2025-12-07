@@ -14,9 +14,9 @@ export default function HomePage() {
       <BlessQuote />
       <EventDetails />
       <LoveStoryTimeline />
+      <PhotoAlbums />
       <PhotoGallery />
       <DigitalMemoryCard />
-      <PhotoAlbums />
       <Footer />
     </main>
   );

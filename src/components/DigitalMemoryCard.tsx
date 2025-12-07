@@ -113,7 +113,7 @@ export default function DigitalMemoryCard() {
   const hasMoreCards = cards.length > MAX_CARDS_ON_HOME;
 
   return (
-    <section className="min-h-screen w-full bg-linear-to-br from-[#f5f1e8] to-[#faf8f3] px-4 py-4 sm:py-6 md:py-10 lg:py-16">
+    <section className="min-h-screen w-full bg-transparent px-4 py-4 sm:py-6 md:py-10 lg:py-16">
       <div ref={ref} className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
