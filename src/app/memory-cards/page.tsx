@@ -2,59 +2,82 @@
 
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
-import { ArrowLeft, Heart, X } from 'lucide-react';
+import { useRef, useState, useEffect } from 'react';
+import { ArrowLeft, Heart, X, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useDeviceFingerprint } from '@/hooks/useDeviceFingerprint';
 
 interface GuestCard {
   id: string;
   serialNumber: number;
   name: string;
   message: string;
-  photo?: string; // Made optional
+  photo?: string;
   timestamp: Date;
+  isOwner?: boolean;
 }
-
-// Mock data - In production, this would come from your backend/database
-const mockCards: GuestCard[] = [
-  {
-    id: '1',
-    serialNumber: 1,
-    name: 'Sarah & John',
-    message: 'Wishing you a lifetime of love and happiness! Congratulations on your special day.',
-    photo: '/images/wedding-couple5.png',
-    timestamp: new Date(),
-  },
-  {
-    id: '2',
-    serialNumber: 2,
-    name: 'Emily Rodriguez',
-    message: 'May your love story be filled with beautiful moments and endless joy. Congratulations!',
-    timestamp: new Date(),
-  },
-  {
-    id: '3',
-    serialNumber: 3,
-    name: 'Michael Chen',
-    message: 'Here\'s to love, laughter, and happily ever after! So happy for you both.',
-    photo: '/images/wedding-couple5.png',
-    timestamp: new Date(),
-  },
-  {
-    id: '4',
-    serialNumber: 4,
-    name: 'David & Lisa',
-    message: 'Wishing you endless love and cherished memories together. Congratulations on your wedding!',
-    timestamp: new Date(),
-  },
-  // Add more mock cards here for testing
-];
 
 export default function AllMemoryCardsPage() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [cards] = useState<GuestCard[]>(mockCards);
+  const { fingerprint } = useDeviceFingerprint();
+  const [cards, setCards] = useState<GuestCard[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
+  // Fetch all memory cards on component mount
+  useEffect(() => {
+    fetchAllCards();
+  }, [fingerprint]);
+
+  const fetchAllCards = async () => {
+    try {
+      setIsLoading(true);
+      // Don't pass limit parameter - fetch ALL cards
+      const url = fingerprint
+        ? `/api/memory-cards?deviceFingerprint=${fingerprint}`
+        : '/api/memory-cards';
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.success) {
+        const formattedCards = data.cards.map((card: any) => ({
+          ...card,
+          timestamp: new Date(card.timestamp),
+        }));
+        setCards(formattedCards);
+      }
+    } catch (error) {
+      console.error('Error fetching cards:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteCard = async (cardId: string) => {
+    if (!confirm('Are you sure you want to delete this memory card?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/memory-cards/${cardId}?deviceFingerprint=${fingerprint}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Remove the card from the list
+        setCards(cards.filter((card) => card.id !== cardId));
+      } else {
+        alert(data.error || 'Failed to delete memory card');
+      }
+    } catch (error) {
+      console.error('Error deleting card:', error);
+      alert('An error occurred while deleting the card');
+    }
+  };
 
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-linear-to-br from-[#f8f5f0] via-[#fef9f3] to-[#f5ebe0]">
@@ -108,6 +131,7 @@ export default function AllMemoryCardsPage() {
                 card={card}
                 index={index}
                 onPhotoClick={setLightboxImage}
+                onDelete={handleDeleteCard}
               />
             ))}
           </motion.div>
@@ -166,10 +190,12 @@ function MemoryCardDisplay({
   card,
   index,
   onPhotoClick,
+  onDelete,
 }: {
   card: GuestCard;
   index: number;
   onPhotoClick: (photo: string) => void;
+  onDelete: (cardId: string) => void;
 }) {
   // Extract initials from name for cards without photos
   const getInitials = (name: string) => {
@@ -188,6 +214,17 @@ function MemoryCardDisplay({
       transition={{ duration: 0.5, delay: index * 0.05 }}
       className="group relative"
     >
+      {/* Delete Button - Only show for owner */}
+      {card.isOwner && (
+        <button
+          onClick={() => onDelete(card.id)}
+          className="absolute -right-2 -top-2 z-10 rounded-full bg-red-500 p-2 text-white shadow-lg transition-all hover:bg-red-600 hover:scale-110"
+          title="Delete this card"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      )}
+
       <div className="overflow-hidden rounded-lg bg-white shadow-lg transition-shadow hover:shadow-xl">
         {card.photo ? (
           // Card with Photo - Image at Top

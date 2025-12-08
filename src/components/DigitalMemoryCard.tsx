@@ -2,47 +2,33 @@
 
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
-import { Heart, Upload, X, Loader2, Lock, ArrowRight } from 'lucide-react';
+import { useRef, useState, useEffect } from 'react';
+import { Heart, Upload, X, Loader2, Lock, ArrowRight, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useDeviceFingerprint } from '@/hooks/useDeviceFingerprint';
+import { compressImage, formatFileSize } from '@/utils/imageCompression';
 
 interface GuestCard {
   id: string;
   serialNumber: number;
   name: string;
   message: string;
-  photo?: string; // Made optional
+  photo?: string;
   timestamp: Date;
+  isOwner?: boolean;
 }
 
-// Mock data with mixed cards (some with photos, some without)
-const mockCards: GuestCard[] = [
-  {
-    id: '1',
-    serialNumber: 1,
-    name: 'Sarah & John',
-    message: 'Wishing you a lifetime of love and happiness! Congratulations on your special day.',
-    photo: '/images/wedding-couple5.png',
-    timestamp: new Date(),
-  },
-  {
-    id: '2',
-    serialNumber: 2,
-    name: 'Emily Rodriguez',
-    message: 'May your love story be filled with beautiful moments and endless joy. Congratulations!',
-    timestamp: new Date(),
-  }
-];
-
-const CORRECT_PASSWORD = '123';
 const MAX_CARDS_ON_HOME = 12;
 
 export default function DigitalMemoryCard() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { fingerprint, isLoading: fingerprintLoading } = useDeviceFingerprint();
+
   const [showModal, setShowModal] = useState(false);
-  const [cards, setCards] = useState<GuestCard[]>(mockCards);
+  const [cards, setCards] = useState<GuestCard[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingCards, setIsLoadingCards] = useState(true);
 
   // Lightbox state
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
@@ -55,48 +41,115 @@ export default function DigitalMemoryCard() {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Fetch memory cards on component mount
+  useEffect(() => {
+    fetchCards();
+  }, [fingerprint]);
+
+  const fetchCards = async () => {
+    try {
+      setIsLoadingCards(true);
+      const url = fingerprint
+        ? `/api/memory-cards?limit=${MAX_CARDS_ON_HOME}&deviceFingerprint=${fingerprint}`
+        : `/api/memory-cards?limit=${MAX_CARDS_ON_HOME}`;
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.success) {
+        const formattedCards = data.cards.map((card: any) => ({
+          ...card,
+          timestamp: new Date(card.timestamp),
+        }));
+        setCards(formattedCards);
+      }
+    } catch (error) {
+      console.error('Error fetching cards:', error);
+    } finally {
+      setIsLoadingCards(false);
+    }
+  };
+
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setGuestPhoto(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        // Show original file size
+        console.log(`Original size: ${formatFileSize(file.size)}`);
+
+        // Compress the image to max 400KB
+        const compressedFile = await compressImage(file, 400);
+        console.log(`Compressed size: ${formatFileSize(compressedFile.size)}`);
+
+        setGuestPhoto(compressedFile);
+
+        // Create preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPhotoPreview(reader.result as string);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        alert('Failed to process image. Please try a different image.');
+      }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!guestName || !guestMessage || !password) return;
-
-    // Validate password
-    if (password !== CORRECT_PASSWORD) {
-      setPasswordError('Incorrect password. Please try again.');
-      return;
-    }
+    if (!guestName || !guestMessage || !password || !fingerprint) return;
 
     setPasswordError('');
     setIsSubmitting(true);
 
-    // Simulate submission - Replace with actual backend
-    setTimeout(() => {
-      const newSerialNumber = cards.length + 1;
-      const newCard: GuestCard = {
-        id: Date.now().toString(),
-        serialNumber: newSerialNumber,
-        name: guestName,
-        message: guestMessage,
-        photo: photoPreview || undefined,
-        timestamp: new Date(),
-      };
+    try {
+      // Create FormData for API submission
+      const formData = new FormData();
+      formData.append('name', guestName);
+      formData.append('message', guestMessage);
+      formData.append('password', password);
+      formData.append('deviceFingerprint', fingerprint);
 
-      setCards([newCard, ...cards]);
+      if (guestPhoto) {
+        formData.append('photo', guestPhoto);
+      }
+
+      const response = await fetch('/api/memory-cards', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.error === 'Invalid password') {
+          setPasswordError('Incorrect password. Please try again.');
+        } else {
+          setPasswordError(data.error || 'Failed to create memory card');
+        }
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (data.success) {
+        // Add the new card to the list
+        const newCard: GuestCard = {
+          ...data.card,
+          timestamp: new Date(data.card.timestamp),
+          isOwner: true,
+        };
+
+        setCards([newCard, ...cards]);
+        setShowModal(false);
+        resetForm();
+      }
+    } catch (error) {
+      console.error('Error creating memory card:', error);
+      setPasswordError('An error occurred. Please try again.');
+    } finally {
       setIsSubmitting(false);
-      setShowModal(false);
-      resetForm();
-    }, 2000);
+    }
   };
 
   const resetForm = () => {
@@ -106,6 +159,30 @@ export default function DigitalMemoryCard() {
     setPhotoPreview(null);
     setPassword('');
     setPasswordError('');
+  };
+
+  const handleDeleteCard = async (cardId: string) => {
+    if (!confirm('Are you sure you want to delete this memory card?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/memory-cards/${cardId}?deviceFingerprint=${fingerprint}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Remove the card from the list
+        setCards(cards.filter((card) => card.id !== cardId));
+      } else {
+        alert(data.error || 'Failed to delete memory card');
+      }
+    } catch (error) {
+      console.error('Error deleting card:', error);
+      alert('An error occurred while deleting the card');
+    }
   };
 
   // Display only first 12 cards on home page
@@ -148,11 +225,12 @@ export default function DigitalMemoryCard() {
           className="grid gap-4 xl:gap-8 sm:grid-cols-2 lg:grid-cols-3"
         >
           {displayedCards.map((card, index) => (
-            <MemoryCardDisplay 
-              key={card.id} 
-              card={card} 
+            <MemoryCardDisplay
+              key={card.id}
+              card={card}
               index={index}
               onPhotoClick={setLightboxImage}
+              onDelete={handleDeleteCard}
             />
           ))}
         </motion.div>
@@ -355,10 +433,12 @@ function MemoryCardDisplay({
   card,
   index,
   onPhotoClick,
+  onDelete,
 }: {
   card: GuestCard;
   index: number;
   onPhotoClick: (photo: string) => void;
+  onDelete: (cardId: string) => void;
 }) {
   // Extract initials from name for cards without photos
   const getInitials = (name: string) => {
@@ -377,6 +457,17 @@ function MemoryCardDisplay({
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="group relative"
     >
+      {/* Delete Button - Only show for owner */}
+      {card.isOwner && (
+        <button
+          onClick={() => onDelete(card.id)}
+          className="absolute -right-2 -top-2 z-10 rounded-full bg-red-500 p-2 text-white shadow-lg transition-all hover:bg-red-600 hover:scale-110"
+          title="Delete this card"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      )}
+
       <div className="overflow-hidden rounded-lg bg-white shadow-lg transition-shadow hover:shadow-xl">
         {card.photo ? (
           // Card with Photo - Image at Top
