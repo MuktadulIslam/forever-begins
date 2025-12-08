@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || '';
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://muktadulislamfolify_db_user:39yohcpHoRTxJywJ@cluster0.divfyxz.mongodb.net/wedding-memory-cards';
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -23,6 +19,10 @@ if (!global.mongoose) {
 }
 
 async function connectDB() {
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
