@@ -10,7 +10,8 @@ import {
   Settings,
   Calendar,
   LayoutDashboard,
-  LogOut
+  LogOut,
+  Folder
 } from 'lucide-react';
 
 interface MenuItem {
@@ -29,6 +30,11 @@ const menuItems: MenuItem[] = [
     icon: Heart,
     label: 'Love Story Timeline',
     href: '/user/admin/timeline'
+  },
+  {
+    icon: Folder,
+    label: 'Photo Albums',
+    href: '/user/admin/albums'
   },
   {
     icon: Image,

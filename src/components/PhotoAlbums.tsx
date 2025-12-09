@@ -2,48 +2,17 @@
 
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { ExternalLink, Image as ImageIcon, Sparkles } from 'lucide-react';
 
 interface Album {
-    id: number;
+    id: string;
     title: string;
     description: string;
     coverImage: string;
     googlePhotosLink: string;
+    order: number;
 }
-
-// Album data - replace with your actual Google Photos links
-const albums: Album[] = [
-    {
-        id: 1,
-        title: 'Engagement Ceremony',
-        description: 'The beautiful beginning of our journey',
-        coverImage: '/images/wedding-couple1.png',
-        googlePhotosLink: 'https://photos.google.com/your-engagement-album',
-    },
-    {
-        id: 2,
-        title: 'Pre-Wedding Shoot',
-        description: 'Captured moments of love and laughter',
-        coverImage: '/images/wedding-couple2.png',
-        googlePhotosLink: 'https://photos.google.com/your-prewedding-album',
-    },
-    {
-        id: 3,
-        title: 'Haldi & Mehendi',
-        description: 'Colors of tradition and celebration',
-        coverImage: '/images/wedding-couple3.png',
-        googlePhotosLink: 'https://photos.google.com/your-haldi-album',
-    },
-    {
-        id: 4,
-        title: 'Wedding Reception',
-        description: 'An evening of love and blessings',
-        coverImage: '/images/wedding-couple4.png',
-        googlePhotosLink: 'https://photos.google.com/your-reception-album',
-    }
-];
 
 function FolderCard({ album, index }: { album: Album; index: number }) {
     const ref = useRef(null);
@@ -243,6 +212,27 @@ function FolderCard({ album, index }: { album: Album; index: number }) {
 export default function PhotoAlbums() {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-50px" });
+    const [albums, setAlbums] = useState<Album[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchAlbums = async () => {
+            try {
+                const response = await fetch('/api/albums');
+                const data = await response.json();
+
+                if (data.success) {
+                    setAlbums(data.albums);
+                }
+            } catch (error) {
+                console.error('Error fetching albums:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAlbums();
+    }, []);
 
     return (
         <section className="relative w-full overflow-hidden bg-linear-to-br from-[#f8f5f0] via-[#fef9f3] to-[#f5ebe0] px-4 pt-10 md:pt-16 lg:pt-20 pb-5 md:pb-8">
@@ -265,20 +255,30 @@ export default function PhotoAlbums() {
                     </p>
                 </motion.div>
 
-                {/* Albums Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-5">
-                    {albums.map((album, index) => (
-                        <FolderCard key={index} album={album} index={index} />
-                    ))}
-                </div>
+                {/* Loading State */}
+                {loading ? (
+                    <div className="flex items-center justify-center py-12">
+                        <div className="text-gray-600">Loading albums...</div>
+                    </div>
+                ) : (
+                    <>
+                        {/* Albums Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-5">
+                            {albums.map((album, index) => (
+                                <FolderCard key={album.id} album={album} index={index} />
+                            ))}
+                        </div>
+                    </>
+                )}
 
                 {/* Additional Info */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ duration: 0.6, delay: 0.8 }}
-                    className="mt-6 md:mt-8 lg:mt-10 text-center"
-                >
+                {!loading && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        transition={{ duration: 0.6, delay: 0.8 }}
+                        className="mt-6 md:mt-8 lg:mt-10 text-center"
+                    >
                     <motion.button
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.98 }}
@@ -339,6 +339,7 @@ export default function PhotoAlbums() {
                         Click to view all our cherished memories
                     </motion.p>
                 </motion.div>
+                )}
             </div>
 
             {/* Enhanced Decorative Elements */}
