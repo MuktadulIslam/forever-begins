@@ -12,6 +12,8 @@ import {
   X,
   RotateCcw,
   AlertCircle,
+  ArrowUp,
+  ArrowDown,
 } from 'lucide-react';
 
 interface TimelineEvent {
@@ -110,6 +112,80 @@ export default function TimelineManagement() {
     } finally {
       setSaving(false);
       setDraggedIndex(null);
+    }
+  };
+
+  const handleMoveUp = async (index: number) => {
+    if (index === 0) return;
+
+    const newEvents = [...events];
+    [newEvents[index - 1], newEvents[index]] = [newEvents[index], newEvents[index - 1]];
+
+    // Update order property
+    const updatedEvents = newEvents.map((event, idx) => ({
+      ...event,
+      order: idx,
+    }));
+
+    setEvents(updatedEvents);
+
+    try {
+      setSaving(true);
+      const response = await fetch('/api/timeline', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          events: updatedEvents.map((event) => ({ id: event.id, order: event.order })),
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        showSuccess('Timeline order updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating order:', error);
+      setError('Failed to update timeline order');
+      fetchEvents();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleMoveDown = async (index: number) => {
+    if (index === events.length - 1) return;
+
+    const newEvents = [...events];
+    [newEvents[index], newEvents[index + 1]] = [newEvents[index + 1], newEvents[index]];
+
+    // Update order property
+    const updatedEvents = newEvents.map((event, idx) => ({
+      ...event,
+      order: idx,
+    }));
+
+    setEvents(updatedEvents);
+
+    try {
+      setSaving(true);
+      const response = await fetch('/api/timeline', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          events: updatedEvents.map((event) => ({ id: event.id, order: event.order })),
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        showSuccess('Timeline order updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating order:', error);
+      setError('Failed to update timeline order');
+      fetchEvents();
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -435,7 +511,7 @@ export default function TimelineManagement() {
                   `}
               >
                 <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                  <GripVertical className="max-md:hidden w-5 h-5 text-gray-400 shrink-0" />
+                  <GripVertical className="hidden md:block w-5 h-5 text-gray-400 shrink-0" />
                   <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-linear-to-br from-[#9caf88] to-[#d4a5a5] text-white shrink-0">
                     <IconComponent icon={event.icon} />
                   </div>
@@ -453,6 +529,25 @@ export default function TimelineManagement() {
                   </div>
                 </div>
                 <div className="flex gap-2 ml-auto sm:ml-0 shrink-0">
+                  {/* Mobile/Tablet reorder buttons */}
+                  <div className="flex md:hidden gap-1">
+                    <button
+                      onClick={() => handleMoveUp(index)}
+                      disabled={index === 0 || saving}
+                      className="p-2 text-gray-600 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      title="Move up"
+                    >
+                      <ArrowUp className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleMoveDown(index)}
+                      disabled={index === events.length - 1 || saving}
+                      className="p-2 text-gray-600 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      title="Move down"
+                    >
+                      <ArrowDown className="w-4 h-4" />
+                    </button>
+                  </div>
                   <button
                     onClick={() => startEditing(event)}
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
