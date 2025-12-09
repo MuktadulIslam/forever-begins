@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Heart, Sparkles } from 'lucide-react';
 
 interface TimelineEvent {
@@ -12,34 +12,8 @@ interface TimelineEvent {
 	icon?: 'heart' | 'sparkles';
 }
 
-const timelineEvents: TimelineEvent[] = [
-	{
-		date: "First Met",
-		title: "Where It All Began",
-		description: "Our paths crossed for the first time, and little did we know, it was the beginning of forever.",
-		icon: 'sparkles'
-	},
-	{
-		date: "First Date",
-		title: "A Magical Evening",
-		description: "Coffee, conversation, and countless smiles. We knew there was something special between us.",
-		icon: 'heart'
-	},
-	{
-		date: "The Proposal",
-		title: "Forever Starts Now",
-		description: "Under the stars, with hearts full of love, we decided to spend our lives together.",
-		icon: 'heart'
-	},
-	{
-		date: "December 14, 2025",
-		title: "Wedding Reception",
-		description: "Celebrating our love with family and friends. Join us as we begin this beautiful journey together.",
-		icon: 'sparkles'
-	}
-];
 
-function TimelineItem({ event, index }: { event: TimelineEvent; index: number }) {
+function TimelineItem({ event, index, totalEvents }: { event: TimelineEvent; index: number; totalEvents: number }) {
 	const ref = useRef(null);
 	const isInView = useInView(ref, { once: true, margin: "-20px" });
 	const isEven = index % 2 === 0;
@@ -101,7 +75,7 @@ function TimelineItem({ event, index }: { event: TimelineEvent; index: number })
 						</div>
 
 						{/* Connecting Line */}
-						{index < timelineEvents.length - 1 && (
+						{index < totalEvents - 1 && (
 							<motion.div
 								initial={{ scaleY: 0 }}
 								animate={isInView ? { scaleY: 1 } : { scaleY: 0 }}
@@ -225,7 +199,40 @@ function TimelineItem({ event, index }: { event: TimelineEvent; index: number })
 
 export default function LoveStoryTimeline() {
 	const ref = useRef(null);
-	const isInView = useInView(ref, { once: true, margin: "-50px" });
+	const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchTimelineEvents = async () => {
+			try {
+				const response = await fetch('/api/timeline');
+				const data = await response.json();
+
+				console.log('Timeline API response:', data); // Debug log
+
+				if (data.success && data.events && data.events.length > 0) {
+					setTimelineEvents(data.events);
+				} else {
+					console.log('Using default timeline events');
+				}
+			} catch (error) {
+				console.error('Error fetching timeline events:', error);
+				// Keep default events on error
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchTimelineEvents();
+	}, []);
+
+	if (loading) {
+		return (
+			<section className="relative min-h-screen w-full overflow-hidden px-4 py-6 lg:py-16 flex items-center justify-center">
+				<div className="text-gray-600 font-cormorant text-xl">Loading timeline...</div>
+			</section>
+		);
+	}
 
 	return (
 		<section className="relative min-h-screen w-full overflow-hidden px-4 py-6 lg:py-16">
@@ -234,7 +241,7 @@ export default function LoveStoryTimeline() {
 				{/* Header */}
 				<motion.div
 					initial={{ opacity: 0, y: 30 }}
-					animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.8 }}
 					className="mb-6 md:mb-8 lg:mb-16 text-center"
 				>
@@ -259,7 +266,7 @@ export default function LoveStoryTimeline() {
 					{/* Timeline Items */}
 					<div className="space-y-0 lg:space-y-4">
 						{timelineEvents.map((event, index) => (
-							<TimelineItem key={index} event={event} index={index} />
+							<TimelineItem key={index} event={event} index={index} totalEvents={timelineEvents.length} />
 						))}
 					</div>
 				</div>
@@ -267,7 +274,7 @@ export default function LoveStoryTimeline() {
 				{/* Decorative End */}
 				<motion.div
 					initial={{ opacity: 0, scale: 0.8 }}
-					animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+					animate={{ opacity: 1, scale: 1 }}
 					transition={{ duration: 0.6, delay: 0.8 }}
 					className="mt-6 sm:mt-8 lg:mt-12 text-center"
 				>
