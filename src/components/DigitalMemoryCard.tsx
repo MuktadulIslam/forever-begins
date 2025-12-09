@@ -259,35 +259,37 @@ export default function DigitalMemoryCard() {
 
       {/* Wish Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="relative w-full max-w-lg overflow-hidden rounded-lg bg-white shadow-2xl"
+            className="relative w-full max-w-lg max-h-[90%] overflow-auto rounded-lg bg-white shadow-2xl"
           >
-            <button
-              onClick={() => {
-                setShowModal(false);
-                resetForm();
-              }}
-              className="absolute right-4 top-4 z-10 rounded-full p-2 hover:bg-gray-100"
-            >
-              <X className="h-5 w-5" />
-            </button>
 
-            <div className="p-6">
-              <h3 className="font-playfair mb-6 text-2xl font-bold text-[#3a3a3a]">
-                Create Your Memory Card
-              </h3>
+            <div className="p-4 sm:p-6">
+              <div className="w-full h-auto flex gap-1">
+                <h3 className="flex-1 font-playfair mb-3 sm:mb-4 text-xl sm:text-2xl font-bold text-[#3a3a3a]">
+                  Create Your Memory Card
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    resetForm();
+                  }}
+                  className="rounded-lg shrink-0 h-auto w-10 flex items-start justify-end"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 {/* Photo Upload - Optional */}
                 <div>
                   <label className="font-cormorant mb-2 block text-sm font-semibold text-[#3a3a3a]">
                     Your Photo <span className="text-gray-400 font-normal">(Optional)</span>
                   </label>
                   {!photoPreview ? (
-                    <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-8 transition-colors hover:border-[#d4a5a5]">
+                    <label className="w-full h-40 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:border-[#d4a5a5]">
                       <Upload className="mb-2 h-8 w-8 text-gray-400" />
                       <p className="font-cormorant text-sm text-gray-600">Upload your photo</p>
                       <p className="font-cormorant text-xs text-gray-400 mt-1">Optional</p>
@@ -299,15 +301,15 @@ export default function DigitalMemoryCard() {
                       />
                     </label>
                   ) : (
-                    <div className="relative">
-                      <img src={photoPreview} alt="Preview" className="h-32 w-32 rounded-full object-cover mx-auto" />
+                    <div className="relative h-40 w-full">
+                      <img src={photoPreview} alt="Preview" className="h-full w-full object-cover  rounded-lg mx-auto" />
                       <button
                         type="button"
                         onClick={() => {
                           setPhotoPreview(null);
                           setGuestPhoto(null);
                         }}
-                        className="absolute top-0 right-1/2 translate-x-16 rounded-full bg-red-500 p-1 text-white"
+                        className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -317,7 +319,7 @@ export default function DigitalMemoryCard() {
 
                 {/* Name Input */}
                 <div>
-                  <label className="font-cormorant mb-2 block text-sm font-semibold text-[#3a3a3a]">
+                  <label className="font-cormorant block text-sm font-semibold text-[#3a3a3a]">
                     Your Name
                   </label>
                   <input
@@ -326,13 +328,13 @@ export default function DigitalMemoryCard() {
                     onChange={(e) => setGuestName(e.target.value)}
                     placeholder="Enter your name"
                     required
-                    className="font-cormorant w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-[#d4a5a5] focus:outline-none"
+                    className="font-cormorant w-full rounded-lg border border-gray-300 px-2.5 py-1.5 focus:border-[#d4a5a5] focus:outline-none"
                   />
                 </div>
 
                 {/* Message Input */}
                 <div>
-                  <label className="font-cormorant mb-2 block text-sm font-semibold text-[#3a3a3a]">
+                  <label className="font-cormorant block text-sm font-semibold text-[#3a3a3a]">
                     Your Wishes (100-200 characters)
                   </label>
                   <textarea
@@ -342,7 +344,7 @@ export default function DigitalMemoryCard() {
                     rows={4}
                     maxLength={200}
                     required
-                    className="font-cormorant w-full rounded-lg border border-gray-300 px-4 py-3 resize-none focus:border-[#d4a5a5] focus:outline-none"
+                    className="font-cormorant w-full rounded-lg border border-gray-300 px-2.5 py-1.5 resize-none focus:border-[#d4a5a5] focus:outline-none"
                   />
                   <p className="font-cormorant mt-1 text-right text-xs text-gray-500">
                     {guestMessage.length}/200
@@ -351,11 +353,11 @@ export default function DigitalMemoryCard() {
 
                 {/* Password Input */}
                 <div>
-                  <label className="font-cormorant mb-2 block text-sm font-semibold text-[#3a3a3a]">
+                  <label className="font-cormorant block text-sm font-semibold text-[#3a3a3a]">
                     Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
                       type="password"
                       value={password}
@@ -365,7 +367,7 @@ export default function DigitalMemoryCard() {
                       }}
                       placeholder="Enter password"
                       required
-                      className="font-cormorant w-full rounded-lg border border-gray-300 px-4 py-3 pl-10 focus:border-[#d4a5a5] focus:outline-none"
+                      className="font-cormorant w-full rounded-lg border border-gray-300 px-2.5 py-1.5 pl-10 focus:border-[#d4a5a5] focus:outline-none"
                     />
                   </div>
                   {passwordError && (
@@ -379,7 +381,7 @@ export default function DigitalMemoryCard() {
                 <button
                   type="submit"
                   disabled={isSubmitting || !guestName || !guestMessage || !password}
-                  className="font-cormorant flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-[#d4a5a5] to-[#b88989] px-6 py-3 font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="font-cormorant flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-[#d4a5a5] to-[#b88989] px-6 py-2 font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
@@ -398,7 +400,7 @@ export default function DigitalMemoryCard() {
 
       {/* Image Lightbox */}
       {lightboxImage && (
-        <div 
+        <div
           className="fixed inset-0 z-60 flex items-center justify-center bg-black/95 p-4"
           onClick={() => setLightboxImage(null)}
         >
@@ -408,7 +410,7 @@ export default function DigitalMemoryCard() {
           >
             <X className="h-6 w-6" />
           </button>
-          
+
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -472,7 +474,7 @@ function MemoryCardDisplay({
         {card.photo ? (
           // Card with Photo - Image at Top
           <>
-            <div 
+            <div
               className="relative h-48 w-full overflow-hidden bg-linear-to-br from-[#9caf88]/10 to-[#d4a5a5]/10 cursor-pointer"
               onClick={() => onPhotoClick(card.photo!)}
             >
@@ -484,17 +486,17 @@ function MemoryCardDisplay({
               {/* Overlay hint on hover */}
               <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all group-hover:bg-black/20">
                 <div className="scale-0 rounded-full bg-white/90 p-3 transition-transform group-hover:scale-100">
-                  <svg 
-                    className="h-6 w-6 text-[#3a3a3a]" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
+                  <svg
+                    className="h-6 w-6 text-[#3a3a3a]"
+                    fill="none"
+                    viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" 
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
                     />
                   </svg>
                 </div>
