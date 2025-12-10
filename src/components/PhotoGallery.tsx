@@ -14,18 +14,18 @@ interface Photo {
 
 // Sample photo data - replace with actual photo paths
 const photos: Photo[] = [
-	{ id: 1, src: '/images/wedding-couple1.png', alt: 'Couple photo 1'},
-	{ id: 2, src: '/images/wedding-couple2.png', alt: 'Couple photo 2' },
-	{ id: 3, src: '/images/wedding-couple3.png', alt: 'Family photo 1' },
-	{ id: 4, src: '/images/wedding-couple4.png', alt: 'Family photo 2' },
-	{ id: 5, src: '/images/wedding-couple5.png', alt: 'Couple photo 3' },
-	{ id: 6, src: '/images/wedding-couple6.png', alt: 'Family photo 3' },
-	{ id: 7, src: '/images/wedding-couple7.png', alt: 'Couple photo 4' },
-	{ id: 8, src: '/images/wedding-couple8.png', alt: 'Family photo 4' },
-	{ id: 9, src: '/images/wedding-couple9.png', alt: 'Couple photo 5' },
-	{ id: 10, src: '/images/wedding-couple10.png', alt: 'Family photo 5' },
-	{ id: 11, src: '/images/wedding-couple11.png', alt: 'Couple photo 6' },
-	{ id: 12, src: '/images/wedding-couple12.png', alt: 'Family photo 6' },
+	{ id: 1, src: '/images/memories/memorie1.jpg', alt: 'Couple photo 1'},
+	{ id: 2, src: '/images/memories/memorie2.jpg', alt: 'Couple photo 2' },
+	{ id: 3, src: '/images/memories/memorie3.jpg', alt: 'Family photo 1' },
+	{ id: 4, src: '/images/memories/memorie4.jpg', alt: 'Family photo 2' },
+	{ id: 5, src: '/images/memories/memorie5.jpg', alt: 'Couple photo 3' },
+	{ id: 6, src: '/images/memories/memorie6.jpg', alt: 'Family photo 3' },
+	{ id: 7, src: '/images/memories/memorie7.jpg', alt: 'Couple photo 4' },
+	{ id: 8, src: '/images/memories/memorie8.jpg', alt: 'Family photo 4' },
+	{ id: 9, src: '/images/memories/memorie9.jpg', alt: 'Couple photo 5' },
+	{ id: 10, src: '/images/memories/memorie10.jpg', alt: 'Family photo 5' },
+	{ id: 11, src: '/images/memories/memorie11.jpg', alt: 'Couple photo 6' },
+	{ id: 12, src: '/images/memories/memorie12.jpg', alt: 'Family photo 6' },
 ];
 
 function PhotoCard({ photo, onClick, index }: { photo: Photo; onClick: () => void; index: number }) {
@@ -60,7 +60,7 @@ function PhotoCard({ photo, onClick, index }: { photo: Photo; onClick: () => voi
 						src={photo.src}
 						alt={photo.alt}
 						fill
-						className="object-cover transition-all duration-700 group-hover:scale-110"
+						className="object-cover transition-all duration-700 group-hover:scale-110 object-top"
 						sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
 					/>
 

@@ -13,34 +13,37 @@ interface Album {
     googlePhotosLink: string;
 }
 
+// Link for "Explore More Albums" button
+const exploreMoreAlbumsLink = 'https://photos.google.com/your-all-albums';
+
 // Album data - replace with your actual Google Photos links
 const albums: Album[] = [
     {
         id: 1,
         title: 'Engagement Ceremony',
         description: 'The beautiful beginning of our journey',
-        coverImage: '/images/wedding-couple1.png',
+        coverImage: '/images/albums/album2.jpg',
         googlePhotosLink: 'https://photos.google.com/your-engagement-album',
     },
     {
         id: 2,
         title: 'Pre-Wedding Shoot',
         description: 'Captured moments of love and laughter',
-        coverImage: '/images/wedding-couple2.png',
+        coverImage: '/images/albums/album4.jpg',
         googlePhotosLink: 'https://photos.google.com/your-prewedding-album',
     },
     {
         id: 3,
         title: 'Haldi & Mehendi',
         description: 'Colors of tradition and celebration',
-        coverImage: '/images/wedding-couple3.png',
+        coverImage: '/images/albums/album3.jpg',
         googlePhotosLink: 'https://photos.google.com/your-haldi-album',
     },
     {
         id: 4,
         title: 'Wedding Reception',
         description: 'An evening of love and blessings',
-        coverImage: '/images/wedding-couple4.png',
+        coverImage: '/images/albums/album1.jpg',
         googlePhotosLink: 'https://photos.google.com/your-reception-album',
     }
 ];
@@ -279,7 +282,10 @@ export default function PhotoAlbums() {
                     transition={{ duration: 0.6, delay: 0.8 }}
                     className="mt-6 md:mt-8 lg:mt-10 text-center"
                 >
-                    <motion.button
+                    <motion.a
+                        href={exploreMoreAlbumsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                         className="group relative inline-flex items-center gap-3 bg-linear-to-r from-[#9caf88] via-[#a8ba95] to-[#d4a5a5] rounded-full px-8 py-2 lg:px-10 lg:py-3 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden"
@@ -327,7 +333,7 @@ export default function PhotoAlbums() {
                         
                         {/* Border glow effect */}
                         <div className="absolute inset-0 rounded-full bg-linear-to-r from-[#9caf88] to-[#d4a5a5] opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300" />
-                    </motion.button>
+                    </motion.a>
                     
                     {/* Decorative text below button */}
                     <motion.p

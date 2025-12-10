@@ -186,7 +186,7 @@ export default function DigitalMemoryCard() {
   };
 
   return (
-    <section className="min-h-screen w-full bg-transparent px-4 py-4 sm:py-6 md:py-10 lg:py-16">
+    <section className="h-auto w-full bg-transparent px-4 py-4 sm:py-6 md:py-10 lg:py-16">
       <div ref={ref} className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
@@ -232,6 +232,7 @@ export default function DigitalMemoryCard() {
         </motion.div>
 
         {/* See More Button */}
+        {cards.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -249,6 +250,7 @@ export default function DigitalMemoryCard() {
               </motion.button>
             </Link>
           </motion.div>
+        )}
       </div>
 
       {/* Wish Modal */}
