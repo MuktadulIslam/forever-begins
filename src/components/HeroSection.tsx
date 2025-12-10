@@ -2,15 +2,21 @@
 
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 
 export default function HeroSection() {
   return (
     <section className="relative h-screen w-full overflow-hidden">
       {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-top bg-no-repeat"
-        style={{ backgroundImage: "url('/images/wedding-couple17.jpg')" }}
-      >
+      <div className="absolute inset-0">
+        <Image
+          src="/images/wedding-couple17.jpg"
+          alt="Wedding couple"
+          fill
+          priority
+          className="object-cover object-top"
+          quality={100}
+        />
         <div className="absolute inset-0 bg-black/50" />
       </div>
 

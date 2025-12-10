@@ -185,10 +185,6 @@ export default function DigitalMemoryCard() {
     }
   };
 
-  // Display only first 12 cards on home page
-  const displayedCards = cards.slice(0, MAX_CARDS_ON_HOME);
-  const hasMoreCards = cards.length > MAX_CARDS_ON_HOME;
-
   return (
     <section className="min-h-screen w-full bg-transparent px-4 py-4 sm:py-6 md:py-10 lg:py-16">
       <div ref={ref} className="mx-auto max-w-7xl">
@@ -224,7 +220,7 @@ export default function DigitalMemoryCard() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="grid gap-4 xl:gap-8 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {displayedCards.map((card, index) => (
+          {cards.map((card, index) => (
             <MemoryCardDisplay
               key={card.id}
               card={card}
@@ -236,7 +232,6 @@ export default function DigitalMemoryCard() {
         </motion.div>
 
         {/* See More Button */}
-        {hasMoreCards && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -254,7 +249,6 @@ export default function DigitalMemoryCard() {
               </motion.button>
             </Link>
           </motion.div>
-        )}
       </div>
 
       {/* Wish Modal */}
